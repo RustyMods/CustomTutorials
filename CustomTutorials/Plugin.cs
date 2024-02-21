@@ -15,8 +15,8 @@ namespace CustomTutorials
     public class CustomTutorialsPlugin : BaseUnityPlugin
     {
         internal const string ModName = "CustomTutorials";
-        internal const string ModVersion = "1.0.0";
-        internal const string Author = "azumatt";
+        internal const string ModVersion = "1.0.1";
+        internal const string Author = "RustyMods";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
         private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;

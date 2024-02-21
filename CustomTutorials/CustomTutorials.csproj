@@ -122,12 +122,8 @@
     </ItemGroup>
     <ItemGroup>
         <Content Include=".gitignore" />
-        <Content Include="assets\DropAssetBundleInThisFolder.txt" />
         <Content Include="environment.props" />
         <Content Include="ILRepack.targets" />
-        <Content Include="Libs\PieceManager.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
         <Content Include="Libs\ServerSync.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
@@ -136,6 +132,9 @@
     <ItemGroup>
         <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
         <PackageReference Include="YamlDotNet" Version="13.1.0" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="assets" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
