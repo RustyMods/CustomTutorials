@@ -111,6 +111,7 @@
     <ItemGroup>
         <Compile Include="Configurations\TutorialData.cs" />
         <Compile Include="Configurations\TutorialManager.cs" />
+        <Compile Include="Patches\SettingPatches.cs" />
         <Compile Include="Patches\ZNetPatches.cs" />
         <Compile Include="Patches\ZNetScenePatches.cs" />
         <Compile Include="Plugin.cs" />

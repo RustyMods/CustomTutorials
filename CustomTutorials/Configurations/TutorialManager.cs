@@ -64,9 +64,16 @@ public static class TutorialManager
         {
             if (path.EndsWith("Example.yml")) continue;
             string data = File.ReadAllText(path);
-            IDeserializer deserializer = new DeserializerBuilder().Build();
-            TutorialData tutorialData = deserializer.Deserialize<TutorialData>(data);
-            customTutorials.Add(tutorialData);
+            try
+            {
+                IDeserializer deserializer = new DeserializerBuilder().Build();
+                TutorialData tutorialData = deserializer.Deserialize<TutorialData>(data);
+                customTutorials.Add(tutorialData);
+            }
+            catch
+            {
+                CustomTutorialsPlugin.CustomTutorialsLogger.LogDebug("Failed to deserialize: " + path);
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using BepInEx;
 using CustomTutorials.Configurations;
 using HarmonyLib;
 using UnityEngine;
@@ -31,6 +32,7 @@ public static class ZNetScenePatches
         int count = 0;
         foreach (TutorialData tutorial in TutorialManager.customTutorials)
         {
+            if (tutorial.m_prefab.IsNullOrWhiteSpace()) continue;
             GameObject prefab = __instance.GetPrefab(tutorial.m_prefab);
             if (!prefab)
             {

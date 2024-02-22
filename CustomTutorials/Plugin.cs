@@ -29,7 +29,7 @@ namespace CustomTutorials
 
         public void Awake()
         {
-            
+            InitConfigs();
             TutorialManager.InitCustomTutorials();
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
@@ -74,12 +74,15 @@ namespace CustomTutorials
         #region ConfigOptions
 
         private static ConfigEntry<Toggle> _serverConfigLocked = null!;
-
+        public static ConfigEntry<Toggle> _OverrideSettings = null!;
         private void InitConfigs()
         {
             _serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On,
                 "If on, the configuration is locked and can be changed by server admins only.");
             _ = ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
+
+            _OverrideSettings = config("2 - Settings", "Ignore Raven Settings", Toggle.On,
+                "If on, plugin will override raven hints setting for any custom tutorials, to enable custom tutorials to appear even when raven hints are disabled");
         }
 
         #region ConfigMethods
