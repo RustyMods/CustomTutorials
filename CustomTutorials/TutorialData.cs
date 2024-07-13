@@ -1,5 +1,8 @@
-﻿namespace CustomTutorials.Configurations;
+﻿using System;
 
+namespace CustomTutorials;
+
+[Serializable]
 public class TutorialData
 {
     public string m_prefab = null!;

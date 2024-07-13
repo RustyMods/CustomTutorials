@@ -4,7 +4,6 @@ using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
-using CustomTutorials.Configurations;
 using HarmonyLib;
 using JetBrains.Annotations;
 using ServerSync;
@@ -15,28 +14,37 @@ namespace CustomTutorials
     public class CustomTutorialsPlugin : BaseUnityPlugin
     {
         internal const string ModName = "CustomTutorials";
-        internal const string ModVersion = "1.0.1";
+        internal const string ModVersion = "1.0.4";
         internal const string Author = "RustyMods";
         private const string ModGUID = Author + "." + ModName;
-        private static string ConfigFileName = ModGUID + ".cfg";
-        private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
+        private static readonly string ConfigFileName = ModGUID + ".cfg";
+        private static readonly string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
         internal static string ConnectionError = "";
         private readonly Harmony _harmony = new(ModGUID);
         public static readonly ManualLogSource CustomTutorialsLogger = BepInEx.Logging.Logger.CreateLogSource(ModName);
         public static readonly ConfigSync ConfigSync = new(ModGUID) { DisplayName = ModName, CurrentVersion = ModVersion, MinimumRequiredVersion = ModVersion };
-        public enum Toggle
-        { On = 1, Off = 0 }
-
+        public enum Toggle { On = 1, Off = 0 }
+        
+        private static ConfigEntry<Toggle> _serverConfigLocked = null!;
+        public static ConfigEntry<Toggle> _enabled = null!;
+        private void InitConfigs()
+        {
+            _serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On,
+                "If on, the configuration is locked and can be changed by server admins only.");
+            _ = ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
+            _enabled = config("2 - Settings", "Enabled", Toggle.On, "If on, raven appears despite tutorials being toggled off");
+        }
+        
         public void Awake()
         {
-            InitConfigs();
-            TutorialManager.InitCustomTutorials();
+            // InitConfigs();
+            TutorialManager.ReadFiles();
+            TutorialManager.InitServerTutorials();
+            TutorialManager.SetupFileWatcher();
             Assembly assembly = Assembly.GetExecutingAssembly();
             _harmony.PatchAll(assembly);
             SetupWatcher();
         }
-
-        #region  Utils
         
         private void OnDestroy()
         {
@@ -69,23 +77,6 @@ namespace CustomTutorials
             }
         }
 
-
-        #endregion
-        #region ConfigOptions
-
-        private static ConfigEntry<Toggle> _serverConfigLocked = null!;
-        public static ConfigEntry<Toggle> _OverrideSettings = null!;
-        private void InitConfigs()
-        {
-            _serverConfigLocked = config("1 - General", "Lock Configuration", Toggle.On,
-                "If on, the configuration is locked and can be changed by server admins only.");
-            _ = ConfigSync.AddLockingConfigEntry(_serverConfigLocked);
-
-            _OverrideSettings = config("2 - Settings", "Ignore Raven Settings", Toggle.On,
-                "If on, plugin will override raven hints setting for any custom tutorials, to enable custom tutorials to appear even when raven hints are disabled");
-        }
-
-        #region ConfigMethods
         private ConfigEntry<T> config<T>(string group, string title, T value, ConfigDescription description,
             bool synchronizedSetting = true)
         {
@@ -116,20 +107,5 @@ namespace CustomTutorials
             [UsedImplicitly] public string? Category = null!;
             [UsedImplicitly] public Action<ConfigEntryBase>? CustomDrawer = null!;
         }
-
-        class AcceptableShortcuts : AcceptableValueBase
-        {
-            public AcceptableShortcuts() : base(typeof(KeyboardShortcut))
-            {
-            }
-
-            public override object Clamp(object value) => value;
-            public override bool IsValid(object value) => true;
-
-            public override string ToDescriptionString() =>
-                "# Acceptable values: " + string.Join(", ", UnityInput.Current.SupportedKeyCodes);
-        }
-        #endregion
-        #endregion
     }
 }
